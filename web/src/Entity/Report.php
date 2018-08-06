@@ -84,12 +84,6 @@ class Report implements \JsonSerializable
         $this->err_desc = $err_desc;
     }
 
-    public function getReportsArray()
-    {
-        return array('id' => $this->id, 'name' => $this->name, 'client' => $this->client, 'deviceID' => $this->deviceID, 'err_desc' => $this->err_desc);
-
-    }
-
     public function jsonSerialize()
     {
         $props = get_object_vars($this);
