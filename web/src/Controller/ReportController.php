@@ -22,6 +22,17 @@ class ReportController extends Controller
     }
 
 
+    const SUCCESS = array(
+        'response' => 'HTTP/1.0 201 OK',
+        'status' => 'success',
+        'message' => 'request is valid'
+    );
+    const ERROR = array(
+        'response' => 'HTTP/1.0 500 Internal Server Error',
+        'status' => 'error',
+        'message' => 'request is not valid'
+    );
+
     /**
      * @Route("/api/reports", name="reports_list")
      * @Method({"GET"})
@@ -52,6 +63,11 @@ class ReportController extends Controller
             $singleReport = array($report->getReportsArray(), self::SUCCESS);
             return new Response(json_encode($singleReport));
         } else {
+            return new Response(json_encode(self::ERROR));
+        }
+    }
+
+    /**
      * @Route("api/reports/delete/{id}", name="delete_report", requirements={"id"="\d+"})
      * Method("DELETE")
      */
@@ -75,13 +91,44 @@ class ReportController extends Controller
      * Method({"POST"})
      */
     public function newReport(Request $request)
+    {
+        $report = new Report();
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $valueObj = json_decode($request->getContent());
+        if (empty($valueObj->name) ||
+            empty($valueObj->client) ||
+            empty($valueObj->deviceID) ||
+            empty($valueObj->err_desc)) {
+            return new Response(json_encode(self::ERROR));
+        }
+        $report->setName($valueObj->name);
+        $report->setClient($valueObj->client);
+        $report->setDeviceID($valueObj->deviceID);
+        $report->setDescription($valueObj->err_desc);
+
+        $entityManager->persist($report);
+        $entityManager->flush();
+        return new Response(json_encode(array($report->getReportsArray(), self::SUCCESS)));
+
+    }
+
+    /**
+     * @Route("api/reports/edit/{id}", name="edit_report", requirements={"id"="\d+"})
+     */
+
+    public function editReport(Request $request, $id)
+    {
+        $report = new Report();
+        $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
+        if (!empty($report)) {
+            $valueObj = json_decode($request->getContent());
             $report->setName($valueObj->name);
             $report->setClient($valueObj->client);
             $report->setDeviceID($valueObj->deviceID);
             $report->setDescription($valueObj->description);
 
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($report);
             $entityManager->flush();
             return new Response(json_encode(array($report->getReportsArray(), self::SUCCESS)));
         } else {
