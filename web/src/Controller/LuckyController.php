@@ -16,13 +16,25 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LuckyController
 {
-
     /**
-     *  @Route("/test")
+     * @Route("/test")
      */
     public function test()
     {
-        $number = random_int(0, 100);
+        $servername = "mysql";
+        $username = "root";
+        $password = "root";
+
+        try {
+            $conn = new \PDO("mysql:host=$servername;dbname=testDB", $username, $password);
+            // set the PDO error mode to exception
+            $conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            echo "Connected successfully";
+        }
+        catch(\PDOException $e)
+        {
+            echo "Connection failed: " . $e->getMessage();
+        }
 
         return new Response("<h1>Ура!</h1>");
     }
