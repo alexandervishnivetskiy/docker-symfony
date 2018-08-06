@@ -1,0 +1,4 @@
+data/
+.idea/
+/web/vendor
+/web/composer.json
