@@ -14,24 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ReportController extends Controller
 {
-    /**
-     * @Route("/api")
-     */
-    public function testFunc(){
-        return new Response('Working!');
-    }
-
-
-    const SUCCESS = array(
-        'response' => 'HTTP/1.0 201 OK',
-        'status' => 'success',
-        'message' => 'request is valid'
-    );
-    const ERROR = array(
-        'response' => 'HTTP/1.0 500 Internal Server Error',
-        'status' => 'error',
-        'message' => 'request is not valid'
-    );
+    const ERROR = ['Error' => 'You entered undefined report\'s ID or this report has been deleted earlier'];
 
     /**
      * @Route("/api/reports", name="reports_list")
@@ -41,54 +24,45 @@ class ReportController extends Controller
     {
         $reports = $this->getDoctrine()->getRepository(Report::class)->findAll();
         if (!empty($reports)) {
-            $allReports = array();
-            foreach ($reports as $report) {
-                $allReports[] = $report->getReportsArray();
-            }
-            $allReports[count($allReports)] = self::SUCCESS;
-            return new Response(json_encode($allReports));
+            return new Response(json_encode($reports), Response::HTTP_OK);
         } else {
-            return new Response(json_encode(self::ERROR));
+            return new Response(['Error' => 'Your request did not return any results'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * @Route("/api/reports/{id}", name="single_report", requirements={"id"="\d+"})
+     * @Route("/api/reports/{id}", requirements={"id"="\d+"})
      * @Method({"GET"})
      */
     public function showReport($id)
     {
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
         if (!empty($report)) {
-            $singleReport = array($report->getReportsArray(), self::SUCCESS);
-            return new Response(json_encode($singleReport));
+            return new Response(json_encode($report), Response::HTTP_OK);
         } else {
-            return new Response(json_encode(self::ERROR));
+            return new Response(json_encode(self::ERROR), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * @Route("api/reports/delete/{id}", name="delete_report", requirements={"id"="\d+"})
-     * Method("DELETE")
+     * @Route("api/reports/delete/{id}", requirements={"id"="\d+"})
      */
     public function deleteReport(Request $request, $id)
     {
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
         $entityManager = $this->getDoctrine()->getManager();
-
         if (!empty($report)) {
             $entityManager->remove($report);
             $entityManager->flush();
-            return new Response(json_encode(array($report->getReportsArray(), self::SUCCESS)));
+            return new Response(json_encode($report), Response::HTTP_OK);
         } else {
-            $reason = array('reason' => 'you entered undefined report ID');
-            return new Response(json_encode(array_merge(self::ERROR, $reason)));
+            return new Response(json_encode(self::ERROR), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * @Route("api/reports/new", name="new_report")
-     * Method({"POST"})
+     * @Route("api/reports/new")
+     * @Method({"POST"})
      */
     public function newReport(Request $request)
     {
@@ -100,21 +74,23 @@ class ReportController extends Controller
             empty($valueObj->client) ||
             empty($valueObj->deviceID) ||
             empty($valueObj->err_desc)) {
-            return new Response(json_encode(self::ERROR));
+//            throw $this->createNotFoundException('You did not fill all requested fields');
+            return new Response(json_encode(['Error' => 'You did not fill all requested fields']), Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        } else {
+            $report->setName($valueObj->name);
+            $report->setClient($valueObj->client);
+            $report->setDeviceID($valueObj->deviceID);
+            $report->setDescription($valueObj->err_desc);
+            $entityManager->persist($report);
+            $entityManager->flush();
+            return new Response(json_encode($report), Response::HTTP_OK);
         }
-        $report->setName($valueObj->name);
-        $report->setClient($valueObj->client);
-        $report->setDeviceID($valueObj->deviceID);
-        $report->setDescription($valueObj->err_desc);
-
-        $entityManager->persist($report);
-        $entityManager->flush();
-        return new Response(json_encode(array($report->getReportsArray(), self::SUCCESS)));
-
     }
 
     /**
-     * @Route("api/reports/edit/{id}", name="edit_report", requirements={"id"="\d+"})
+     * @Route("api/reports/edit/{id}", requirements={"id"="\d+"})
+     * @Method({"POST"})
      */
 
     public function editReport(Request $request, $id)
@@ -126,13 +102,14 @@ class ReportController extends Controller
             $report->setName($valueObj->name);
             $report->setClient($valueObj->client);
             $report->setDeviceID($valueObj->deviceID);
-            $report->setDescription($valueObj->description);
+            $report->setDescription($valueObj->err_desc);
 
             $entityManager = $this->getDoctrine()->getManager();
+//            $entityManager->persist($report);
             $entityManager->flush();
-            return new Response(json_encode(array($report->getReportsArray(), self::SUCCESS)));
+            return new Response(json_encode($report), Response::HTTP_OK);
         } else {
-            return new Response(json_encode(self::ERROR));
+            return new Response(json_encode(self::ERROR), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }

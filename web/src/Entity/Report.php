@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReportRepository")
  */
-class Report
+class Report implements \JsonSerializable
 
 {
     /**
@@ -88,5 +88,11 @@ class Report
     {
         return array('id' => $this->id, 'name' => $this->name, 'client' => $this->client, 'deviceID' => $this->deviceID, 'err_desc' => $this->err_desc);
 
+    }
+
+    public function jsonSerialize()
+    {
+        $props = get_object_vars($this);
+        return $props;
     }
 }
