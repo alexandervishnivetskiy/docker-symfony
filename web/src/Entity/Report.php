@@ -30,7 +30,7 @@ class Report implements \JsonSerializable
     /**
      * @ORM\Column(type="integer")
      */
-    prvate $deviceID;
+    private $deviceID;
 
     /**
      * @ORM\Column(type="string", length=250)
