@@ -26,7 +26,7 @@ class ReportController extends Controller
         if (!empty($reports)) {
             return new Response(json_encode($reports), Response::HTTP_OK);
         } else {
-            return new Response(['Error' => 'Your request did not return any results'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new Response(json_encode(['Error' => 'Your request did not return any results']), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
