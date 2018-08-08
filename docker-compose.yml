@@ -9,6 +9,7 @@ services:
     container_name: nginx
     environment:
     - NGINX_HOST=${NGINX_HOST}
+    - DATABASE_URL=mysql://root:root@mysql:3306/testDB
     ports:
     - "80:80"
     links:
@@ -35,8 +36,6 @@ services:
   mysql:
       image: mysql:5.7
       container_name: mysql
-      env_file:
-      - ".env"
       environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_USER=${MYSQL_ROOT_USER}
@@ -50,6 +49,8 @@ services:
   composer:
       container_name: composer
       image: composer
+      env_file:
+        - .myenv
       volumes:
       - "./web:/app"
       command: install
