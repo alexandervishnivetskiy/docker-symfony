@@ -4,7 +4,6 @@ data/
 /web/public/bundles/
 /web/var/
 /web/vendor/
-/web/composer.json
 /web/node_modules/
 /web/public/build/
 /web/npm-debug.log
