@@ -1,6 +1,5 @@
 data/
 .idea/
-/web/vendor
 /web/.en
 /web/public/bundles/
 /web/var/
@@ -13,3 +12,4 @@ data/
 /web.phpunit
 /web/phpunit.xml
 /web/.web-server-pid
+web/gitignore
