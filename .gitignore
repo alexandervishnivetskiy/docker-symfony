@@ -11,4 +11,3 @@ data/
 /web.phpunit
 /web/phpunit.xml
 /web/.web-server-pid
-/web/config/
