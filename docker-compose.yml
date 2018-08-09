@@ -10,7 +10,7 @@ services:
     environment:
     - NGINX_HOST=${NGINX_HOST}
     ports:
-    - "80:80"
+    - "8888:80"
     links:
       - php
   php:
@@ -42,7 +42,7 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       ports:
-      - "3306"
+      - "3366:3306"
       volumes:
       - "./data/db/mysql:/var/lib/mysql"
   composer:
