@@ -1,6 +1,6 @@
 data/
 .idea/
-/web/.en
+/web/.env
 /web/public/bundles/
 /web/var/
 /web/vendor/
@@ -12,3 +12,4 @@ data/
 /web.phpunit
 /web/phpunit.xml
 /web/.web-server-pid
+/web/config/
