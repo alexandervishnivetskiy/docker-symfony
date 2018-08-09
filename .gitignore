@@ -1,0 +1,14 @@
+data/
+.idea/
+/web/.en
+/web/public/bundles/
+/web/var/
+/web/vendor/
+/web/composer.json
+/web/node_modules/
+/web/public/build/
+/web/npm-debug.log
+/web/yarn-error.log
+/web.phpunit
+/web/phpunit.xml
+/web/.web-server-pid
