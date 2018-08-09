@@ -19,6 +19,17 @@ class ReportRepository extends ServiceEntityRepository
         parent::__construct($registry, Report::class);
     }
 
+
+    public function findAllReportByName($name)
+    {
+        $conn = $this->getEntityManager()->getConnection();
+        $sql = "SELECT * FROM report WHERE name LIKE '%$name%'";
+        $query = $conn->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+
 //    /**
 //     * @return Report[] Returns an array of Report objects
 //     */

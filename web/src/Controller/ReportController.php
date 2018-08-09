@@ -10,26 +10,25 @@ use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
-//$dotenv = new Dotenv();
-//$dotenv->load(__DIR__ . '/../../../.env');
 
 class ReportController extends Controller
 {
 
     /**
-     * @Route("/env")
+     * @Route("/search/{name}")
      */
-    public function loadEnv(){
-        $dotenv = new Dotenv();
-//        $dotenv->load( '../../.env');
-//        $_ENV['DATABASE_URL'] = 'DATABASE_URL=mysql://root:root@mysql:3306/testDB';
-        var_dump($_ENV);
-
-        return new Response();
+    public function searchReports($name)
+    {
+        $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportByName($name);
+        if (!$reports){
+            throw $this->createNotFoundException("No reports found, please correct or specify report name");
+        }
+        return new JsonResponse($reports, 200);
     }
+
     /**
      * @Route("/api/reports", name="reports_list")
      * @Method({"GET"})
@@ -41,8 +40,7 @@ class ReportController extends Controller
             throw $this->createNotFoundException('No reports found');
         }
 
-        $reports = json_encode($reports);
-        return new Response($reports, 200);
+        return new JsonResponse($reports, 200);
     }
 
     /**
@@ -55,8 +53,8 @@ class ReportController extends Controller
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
         }
-        $report = json_encode($report);
-        return new Response($report, 200);
+
+        return new JsonResponse($report, 200);
     }
 
     /**
@@ -70,12 +68,9 @@ class ReportController extends Controller
         }
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($report);
-        $report = json_encode($report);
         $entityManager->flush();
 
-
-        return new Response($report, 200);
-
+        return new JsonResponse($report, 200);
     }
 
     /**
@@ -87,7 +82,6 @@ class ReportController extends Controller
     {
         $report = new Report();
         $entityManager = $this->getDoctrine()->getManager();
-
         $valueObj = $request->getContent();
         $valueObj = json_decode($valueObj);
 
@@ -104,12 +98,10 @@ class ReportController extends Controller
         $report->setClient($valueObj->client);
         $report->setDeviceID($valueObj->deviceID);
         $report->setDescription($valueObj->err_desc);
-
         $entityManager->persist($report);
         $entityManager->flush();
 
-        $report = json_encode($report);
-        return new Response($report, 200);
+        return new JsonResponse($report, 200);
 
     }
 
@@ -134,8 +126,7 @@ class ReportController extends Controller
         $entityManager = $this->getDoctrine()->getManager();
 //            $entityManager->persist($report);
         $entityManager->flush();
-        $report = json_encode($report);
-        return new Response($report, 200);
+        return new JsonResponse($report, 200);
     }
 
 }
