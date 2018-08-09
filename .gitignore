@@ -1,3 +1,26 @@
 data/
 .idea/
 /web/vendor
+/web/.env
+
+/web/public/bundles/
+/web/var/
+/web/vendor/
+/web/composer.json
+###< symfony/framework-bundle ###
+
+###> symfony/webpack-encore-pack ###
+/web/node_modules/
+/web/public/build/
+/web/npm-debug.log
+/web/yarn-error.log
+###< symfony/webpack-encore-pack ###
+
+###> symfony/phpunit-bridge ###
+/web.phpunit
+/web/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+###> symfony/web-server-bundle ###
+/web/.web-server-pid
+###< symfony/web-server-bundle ###
