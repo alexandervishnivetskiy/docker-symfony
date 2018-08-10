@@ -13,7 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
-
 class ReportController extends Controller
 {
 
@@ -23,7 +22,7 @@ class ReportController extends Controller
     public function searchReports($name)
     {
         $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportByName($name);
-        if (!$reports){
+        if (!$reports) {
             throw $this->createNotFoundException("No reports found, please correct or specify report name");
         }
         return new JsonResponse($reports, 200);
@@ -77,32 +76,22 @@ class ReportController extends Controller
      * @Route("api/reports/new")
      * @Method({"POST"})
      */
-    public
-    function newReport(Request $request)
+
+    public function newReport(Request $request)
     {
         $report = new Report();
         $entityManager = $this->getDoctrine()->getManager();
-        $valueObj = $request->getContent();
-        $valueObj = json_decode($valueObj);
+        $request = Request::createFromGlobals();
 
-        if (empty($valueObj->name) ||
-            empty($valueObj->client) ||
-            empty($valueObj->deviceID) ||
-            empty($valueObj->err_desc)) {
-            throw $this->createNotFoundException('You did not fill all requested fields');
-        } elseif (!is_int($valueObj->deviceID)) {
-            throw $this->createNotFoundException('You must add integer value to deviceID field');
-        }
+        $report->setName($request->request->get('name'));
+        $report->setClient($request->request->get('client'));
+        $report->setDeviceID($request->request->get('deviceID'));
+        $report->setDescription($request->request->get('err_desc'));
 
-        $report->setName($valueObj->name);
-        $report->setClient($valueObj->client);
-        $report->setDeviceID($valueObj->deviceID);
-        $report->setDescription($valueObj->err_desc);
         $entityManager->persist($report);
         $entityManager->flush();
 
         return new JsonResponse($report, 200);
-
     }
 
     /**
@@ -113,18 +102,17 @@ class ReportController extends Controller
     public function editReport(Request $request, $id)
     {
         $report = new Report();
+        $entityManager = $this->getDoctrine()->getManager();
+
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
         }
-        $valueObj = json_decode($request->getContent());
-        $report->setName($valueObj->name);
-        $report->setClient($valueObj->client);
-        $report->setDeviceID($valueObj->deviceID);
-        $report->setDescription($valueObj->err_desc);
+        $report->setName($request->request->get('name'));
+        $report->setClient($request->request->get('client'));
+        $report->setDeviceID($request->request->get('deviceID'));
+        $report->setDescription($request->request->get('err_desc'));
 
-        $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->persist($report);
         $entityManager->flush();
         return new JsonResponse($report, 200);
     }
