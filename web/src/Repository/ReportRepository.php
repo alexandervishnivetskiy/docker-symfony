@@ -22,11 +22,16 @@ class ReportRepository extends ServiceEntityRepository
 
     public function findAllReportByName($name)
     {
-        $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT * FROM report WHERE name LIKE '%$name%'";
-        $query = $conn->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
+
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->select('r')
+            ->from('App\Entity\Report', 't')
+            ->where("r.name LIKE :name")
+            ->setParameter('name', "%$name%")
+            ->getQuery();
+
+        return $queryBuilder->execute();
+
     }
 
 
@@ -37,9 +42,9 @@ class ReportRepository extends ServiceEntityRepository
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
+            ->andWhere('r . exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
+            ->orderBy('r . id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -51,7 +56,7 @@ class ReportRepository extends ServiceEntityRepository
     public function findOneBySomeField($value): ?Report
     {
         return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
+            ->andWhere('r . exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

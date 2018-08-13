@@ -18,6 +18,7 @@ class ReportController extends Controller
 
     /**
      * @Route("/search/{name}")
+     * @Method({"GET"})
      */
     public function searchReports($name)
     {
@@ -57,7 +58,7 @@ class ReportController extends Controller
     }
 
     /**
-     * @Route("api/reports/delete/{id}", requirements={"id"="\d+"})
+     * @Route("/api/reports/delete/{id}", requirements={"id"="\d+"})
      */
     public function deleteReport(Request $request, $id)
     {
@@ -73,7 +74,7 @@ class ReportController extends Controller
     }
 
     /**
-     * @Route("api/reports/new")
+     * @Route("/api/reports/new")
      * @Method({"POST"})
      */
 
@@ -95,13 +96,11 @@ class ReportController extends Controller
     }
 
     /**
-     * @Route("api/reports/edit/{id}", requirements={"id"="\d+"})
-     * @Method({"POST"})
+     * @Route("/api/reports/edit/{id}", requirements={"id"="\d+"})
      */
 
     public function editReport(Request $request, $id)
     {
-        $report = new Report();
         $entityManager = $this->getDoctrine()->getManager();
 
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
@@ -116,5 +115,4 @@ class ReportController extends Controller
         $entityManager->flush();
         return new JsonResponse($report, 200);
     }
-
 }

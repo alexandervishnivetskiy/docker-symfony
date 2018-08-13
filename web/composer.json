@@ -26,6 +26,7 @@
         "symfony/yaml": "^4.1"
     },
     "require-dev": {
+        "symfony/phpunit-bridge": "*",
         "symfony/debug-pack": "*",
         "symfony/dotenv": "^4.1",
         "symfony/profiler-pack": "*",

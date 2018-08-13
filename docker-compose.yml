@@ -21,6 +21,7 @@ services:
     container_name: php
     links:
       - mysql
+      - composer
   myadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin
