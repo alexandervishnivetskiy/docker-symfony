@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class CreateUserCommand extends Command\Command
+class ReportCommand extends Command\Command
 {
 
     protected $em;
