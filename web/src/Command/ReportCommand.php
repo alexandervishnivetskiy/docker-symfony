@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+//require_once __DIR__ . '../../faker/vendor/fzaninotto/faker/src/autoload.php';
 
 use App\Entity\Report;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,13 +40,13 @@ class ReportCommand extends Command\Command
         for ($i = 1; $i <= $count; $i++) {
             $report = new Report();
             $report->setName('testName');
-            $report->setDeviceID(222222);
+            $report->setDeviceID(2);
             $report->setDescription('Test description');
             $report->setClient('Client');
             $this->em->persist($report);
         }
 
         $this->em->flush();
-        $output->writeln('You want to create: ' . $count . ' reports');
+        $output->writeln('You just created ' . $count . ' reports');
     }
 }

@@ -12,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-
 class ReportController extends Controller
 {
 
@@ -35,6 +34,7 @@ class ReportController extends Controller
      */
     public function showAll()
     {
+        include __DIR__ . 'MyTest.php';
         $reports = $this->getDoctrine()->getRepository(Report::class)->findAll();
         if (!$reports) {
             throw $this->createNotFoundException('No reports found');
