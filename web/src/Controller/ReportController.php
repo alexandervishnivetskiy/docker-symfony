@@ -50,6 +50,7 @@ class ReportController extends Controller
     public function showReport($id)
     {
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
+
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
         }
@@ -62,6 +63,7 @@ class ReportController extends Controller
      */
     public function deleteReport(Request $request, $id)
     {
+
         $report = $this->getDoctrine()->getRepository(Report::class)->find($id);
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
