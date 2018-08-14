@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-require_once '/var/www/html/faker/vendor/fzaninotto/faker/src/autoload.php';
+require_once '/var/www/html/vendor/fzaninotto/faker/src//autoload.php';
 
 use App\Entity\Report;
 use Doctrine\ORM\EntityManagerInterface;
@@ -36,6 +36,7 @@ class ReportCommand extends Command\Command
     {
         $count = $input->getArgument('number');
         $faker = Factory::create();
+
 
         for ($i = 1; $i <= $count; $i++) {
             $report = new Report();

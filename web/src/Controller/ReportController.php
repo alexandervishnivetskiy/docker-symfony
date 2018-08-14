@@ -34,7 +34,6 @@ class ReportController extends Controller
      */
     public function showAll()
     {
-        include __DIR__ . 'MyTest.php';
         $reports = $this->getDoctrine()->getRepository(Report::class)->findAll();
         if (!$reports) {
             throw $this->createNotFoundException('No reports found');
