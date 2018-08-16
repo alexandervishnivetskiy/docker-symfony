@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Entity\Report;
+use App\Entity\Client;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Symfony\Component\Console\Command;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class ReportCommand extends Command\Command
+class ClientCommand extends Command\Command
 {
 
     protected $em;
@@ -25,8 +25,8 @@ class ReportCommand extends Command\Command
     protected function configure()
     {
         $this
-            ->setName('app:add-reports')
-            ->setDescription('Creates entries to report table')
+            ->setName('app:add-clients')
+                ->setDescription('Creates entries to client table')
             ->addArgument('number', InputArgument::REQUIRED);
     }
 
@@ -37,15 +37,15 @@ class ReportCommand extends Command\Command
 
 
         for ($i = 1; $i <= $count; $i++) {
-            $report = new Report();
-            $report->setName($faker->name);
-            $report->setDeviceID($faker->numberBetween(1, 10000));
-            $report->setDescription($faker->text);
-            $report->setClient($faker->company);
-            $this->em->persist($report);
+            $client = new Client();
+            $client->setName($faker->company);
+            $client->setTelephone($faker->phoneNumber);
+            $client->setCountry($faker->country);
+            $client->setEmail($faker->email);
+            $this->em->persist($client);
         }
 
         $this->em->flush();
-        $output->writeln('You just created ' . $count . ' reports');
+        $output->writeln('You just created ' . $count . ' clients');
     }
 }
