@@ -11,6 +11,13 @@ class Report implements \JsonSerializable
 
 {
     /**
+     *Many Reports have One Client.
+     * @ManyToOne(targetEntity="Client", inversedBy="name")
+     */
+
+
+
+    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")

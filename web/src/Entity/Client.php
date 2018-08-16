@@ -3,12 +3,18 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
  */
-class Client
+class Client implements \JsonSerializable
 {
+    /**
+     *One Client has Many Reports.
+     * @OneToMany(targetEntity="Report", mappedBy="client")
+     */
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -93,5 +99,10 @@ class Client
     {
         $props = get_object_vars($this);
         return $props;
+    }
+
+    public function __construct()
+    {
+        $this->features = new ArrayCollection();
     }
 }

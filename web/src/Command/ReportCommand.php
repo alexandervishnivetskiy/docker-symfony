@@ -39,7 +39,7 @@ class ReportCommand extends Command\Command
         for ($i = 1; $i <= $count; $i++) {
             $report = new Report();
             $report->setName($faker->name);
-            $report->setDeviceID($faker->numberBetween(1, 10000));
+            $report->setDeviceID($faker->numberBetween(1, 5));
             $report->setDescription($faker->text);
             $report->setClient($faker->company);
             $this->em->persist($report);
