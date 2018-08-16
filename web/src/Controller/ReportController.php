@@ -18,17 +18,10 @@ class ReportController extends Controller
      * @Route("/api/reports/download")
      * @Method({"GET"})
      */
-    public function importCSV(ReportDownloader $downloader)
+    public function importCSV()
     {
-        $path = '/var/www/html/reports/reports.csv';
-        $file = fopen($path, 'w');
-        if (!$file){
-            throw $this->createNotFoundException('Error with creating file reports.csv');
-        }
-        $reports = $this->getDoctrine()->getRepository(Report::class)->findAll();
-        $reports = json_encode($reports);
-        $reports = json_decode($reports, true);
-        $downloader->importReports($file, $reports);
+        $downloader = $this->get('report.downloader');
+        $downloader->importReports();
         return new Response();
     }
 

@@ -1,19 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alexandr
- * Date: 16.08.18
- * Time: 15:03
- */
 
 namespace App\Services;
+use App\Entity\Report;
+use Doctrine\ORM\EntityManagerInterface;
 
 
 class ReportDownloader
 {
-    public function importReports($file, $list){
-        foreach ($list as $fields) {
-            fputcsv($file, $fields);
+    private $entityManager;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function importReports(){
+        $path = '/var/www/html/reports/reports.csv';
+        $reports = $this->entityManager->getRepository(Report::class)->findAll();
+        $reports = json_encode($reports);
+        $reports = json_decode($reports, true);
+        $file = fopen($path, 'w');
+        foreach ($reports as $report) {
+            fputcsv($file, $report);
         }
     }
 
