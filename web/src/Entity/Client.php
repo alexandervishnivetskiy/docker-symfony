@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -10,11 +11,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Client implements \JsonSerializable
 {
-    /**
-     *One Client has Many Reports.
-     * @OneToMany(targetEntity="Report", mappedBy="client")
-     */
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -42,6 +38,16 @@ class Client implements \JsonSerializable
      */
     private $email;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Report", mappedBy="client", orphanRemoval=true)
+     */
+    private $reports;
+
+    public function __construct()
+    {
+        $this->reports = new ArrayCollection();
+    }
+
     public function getId()
     {
         return $this->id;
@@ -52,7 +58,7 @@ class Client implements \JsonSerializable
         return $this->name;
     }
 
-    public function setName($name): self
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -101,8 +107,34 @@ class Client implements \JsonSerializable
         return $props;
     }
 
-    public function __construct()
+    /**
+     * @return Collection|Report[]
+     */
+    public function getReports(): Collection
     {
-        $this->features = new ArrayCollection();
+        return $this->reports;
+    }
+
+    public function addReport(Report $report): self
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports[] = $report;
+            $report->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReport(Report $report): self
+    {
+        if ($this->reports->contains($report)) {
+            $this->reports->removeElement($report);
+            // set the owning side to null (unless already changed)
+            if ($report->getClient() === $this) {
+                $report->setClient(null);
+            }
+        }
+
+        return $this;
     }
 }

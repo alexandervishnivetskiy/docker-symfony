@@ -11,13 +11,6 @@ class Report implements \JsonSerializable
 
 {
     /**
-     *Many Reports have One Client.
-     * @ManyToOne(targetEntity="Client", inversedBy="name")
-     */
-
-
-
-    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -32,7 +25,7 @@ class Report implements \JsonSerializable
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private $client;
+    private $clientName;
 
     /**
      * @ORM\Column(type="integer")
@@ -44,6 +37,12 @@ class Report implements \JsonSerializable
      */
 
     private $err_desc;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="reports")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $client;
 
 
     public function getId()
@@ -61,14 +60,14 @@ class Report implements \JsonSerializable
         $this->name = $name;
     }
 
-    public function getClient()
+    public function getClientName()
     {
-        return $this->client;
+        return $this->clientName;
     }
 
-    public function setClient($client)
+    public function setClientName($clientName)
     {
-        $this->client = $client;
+        $this->clientName = $clientName;
     }
 
     public function getDeviceID()
@@ -95,5 +94,17 @@ class Report implements \JsonSerializable
     {
         $props = get_object_vars($this);
         return $props;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
+
+        return $this;
     }
 }
