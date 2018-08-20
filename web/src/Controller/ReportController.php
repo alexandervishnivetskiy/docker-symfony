@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Report;
-use App\Services\ReportDownloader;
+use App\Repository\ReportRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyInfo\Type;
@@ -14,6 +17,27 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ReportController extends Controller
 {
+    /**
+     * @Route("/client/{id}")
+     * @Method({"GET"})
+     */
+    public function showAllReportsOfClient($id, EntityManagerInterface $entityManager)
+    {
+        $client = $entityManager->find("App\Entity\Client", $id);
+        $reports = $client->getReports();
+
+        $reportsArray = array();
+        foreach ($reports as $report) {
+            $arr = array();
+            $arr['id'] = $report->getID();
+            $arr['name'] = $report->getName();
+            $arr['deviceID'] = $report->getDeviceID();
+            $arr['description'] = $report->getDescription();
+            $reportsArray[] = $arr;
+        }
+        return new JsonResponse($reportsArray);
+    }
+
     /**
      * @Route("/api/reports/download")
      * @Method({"GET"})
@@ -48,7 +72,6 @@ class ReportController extends Controller
         if (!$reports) {
             throw $this->createNotFoundException('No reports found');
         }
-
         return new JsonResponse($reports, 200);
     }
 
@@ -63,7 +86,6 @@ class ReportController extends Controller
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
         }
-
         return new JsonResponse($report, 200);
     }
 

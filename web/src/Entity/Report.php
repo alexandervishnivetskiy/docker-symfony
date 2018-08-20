@@ -23,11 +23,6 @@ class Report implements \JsonSerializable
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $clientName;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $deviceID;
@@ -58,16 +53,6 @@ class Report implements \JsonSerializable
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    public function getClientName()
-    {
-        return $this->clientName;
-    }
-
-    public function setClientName($clientName)
-    {
-        $this->clientName = $clientName;
     }
 
     public function getDeviceID()

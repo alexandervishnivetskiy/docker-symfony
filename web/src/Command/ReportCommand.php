@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Client;
 use App\Entity\Report;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
@@ -37,11 +38,18 @@ class ReportCommand extends Command\Command
 
 
         for ($i = 1; $i <= $count; $i++) {
+            $client = new Client();
+            $client->setName($faker->name);
+            $client->setCountry($faker->country);
+            $client->setTelephone($faker->phoneNumber);
+            $client->setCountry($faker->country);
+            $client->setEmail($faker->email);
+            $this->em->persist($client);
             $report = new Report();
             $report->setName($faker->name);
-            $report->setDeviceID($faker->numberBetween(1, 5));
+            $report->setDeviceID($faker->numberBetween(1, 100));
             $report->setDescription($faker->text);
-            $report->setClient($faker->company);
+            $report->setClient($client);
             $this->em->persist($report);
         }
 
