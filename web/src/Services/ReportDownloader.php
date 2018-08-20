@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Entity\Report;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class ReportDownloader
@@ -16,10 +17,17 @@ class ReportDownloader
     public function importReports(){
         $path = '/var/www/html/reports/reports.csv';
         $reports = $this->entityManager->getRepository(Report::class)->findAll();
-        $reports = json_encode($reports);
-        $reports = json_decode($reports, true);
+        $reportsArray = array();
+        foreach ($reports as $report){
+            $arr = array();
+            $arr['id'] = $report->getID();
+            $arr['name'] = $report->getName();
+            $arr['deviceID'] = $report->getDeviceID();
+            $arr['description'] = $report->getDescription();
+            $reportsArray[] = $arr;
+        };
         $file = fopen($path, 'w');
-        foreach ($reports as $report) {
+        foreach ($reportsArray as $report) {
             fputcsv($file, $report);
         }
     }
