@@ -21,9 +21,12 @@ class ReportController extends Controller
      * @Route("/client/{id}")
      * @Method({"GET"})
      */
-    public function showAllReportsOfClient($id, EntityManagerInterface $entityManager)
+    public function showAllReportsOfClient($id)
     {
-        $client = $entityManager->find("App\Entity\Client", $id);
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        if (!$client){
+            throw $this->createNotFoundException('No client found for id' . " $id");
+        }
         $reports = $client->getReports();
 
         $reportsArray = array();
