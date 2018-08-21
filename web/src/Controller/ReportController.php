@@ -44,6 +44,7 @@ class ReportController extends Controller
         }
         $reports = $client->getReports();
 
+
         $reportsArray = array();
         foreach ($reports as $report) {
             $arr = array();
@@ -51,7 +52,11 @@ class ReportController extends Controller
             $arr['name'] = $report->getName();
             $arr['deviceID'] = $report->getDeviceID();
             $arr['description'] = $report->getDescription();
+            $arr['client'] = $report->getClient()->getName();
             $reportsArray[] = $arr;
+        }
+        if (empty($reportsArray)){
+            throw $this->createNotFoundException('The client with id ' . $id . ' doesn\'t have any reports');
         }
         return new JsonResponse($reportsArray);
     }

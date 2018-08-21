@@ -13,32 +13,25 @@ class ClientFixtures extends Fixture
 {
 
     public function load(ObjectManager $manager)
+
     {
         $faker = Factory::create();
-
-        for ($i = 0; $i < 5; $i++) {
-            $report = new Report();
-            $report->setName($faker->text(20));
-            $report->setDeviceID($faker->numberBetween(1, 10000));
-            $report->setDescription($faker->text);
-            $manager->persist($report);
-
-
-            $client = new Client();
+        $count = rand(1,10);
+        $client = new Client();
+        for ($i = 0; $i < $count; $i++) {
             $client->setName($faker->name);
             $client->setCountry($faker->country);
             $client->setTelephone($faker->phoneNumber);
             $client->setCountry($faker->country);
             $client->setEmail($faker->email);
-            $client->addReport($report);
             $manager->persist($client);
 
-
-
-
-
-//            $client->addReport($report);
-
+            $report = new Report();
+            $report->setName($faker->text(20));
+            $report->setDeviceID($faker->numberBetween(1, 10000));
+            $report->setDescription($faker->text);
+            $report->setClient($client);
+            $manager->persist($report);
 
             $manager->flush();
         }
