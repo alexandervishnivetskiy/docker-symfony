@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Report;
-use App\Services\ReportDownloader;
+use App\Repository\ReportRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Faker\Factory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyInfo\Type;
@@ -14,6 +17,45 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ReportController extends Controller
 {
+    /**
+     * @Route("/api/client/delete/{id}")
+     * @Method({"GET"})
+     */
+    public function deleteClient($id, EntityManagerInterface $entityManager)
+    {
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        if (!$client) {
+            throw $this->createNotFoundException('No client found for id' . " $id");
+        }
+        $entityManager->remove($client);
+        $entityManager->flush();
+        return new JsonResponse($client);
+    }
+
+    /**
+     * @Route("/api/client/{id}")
+     * @Method({"GET"})
+     */
+    public function showAllReportsOfClient($id)
+    {
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        if (!$client) {
+            throw $this->createNotFoundException('No client found for id' . " $id");
+        }
+        $reports = $client->getReports();
+
+        $reportsArray = array();
+        foreach ($reports as $report) {
+            $arr = array();
+            $arr['id'] = $report->getID();
+            $arr['name'] = $report->getName();
+            $arr['deviceID'] = $report->getDeviceID();
+            $arr['description'] = $report->getDescription();
+            $reportsArray[] = $arr;
+        }
+        return new JsonResponse($reportsArray);
+    }
+
     /**
      * @Route("/api/reports/download")
      * @Method({"GET"})
@@ -48,7 +90,6 @@ class ReportController extends Controller
         if (!$reports) {
             throw $this->createNotFoundException('No reports found');
         }
-
         return new JsonResponse($reports, 200);
     }
 
@@ -63,7 +104,6 @@ class ReportController extends Controller
         if (!$report) {
             throw $this->createNotFoundException('No reports found for id ' . $id);
         }
-
         return new JsonResponse($report, 200);
     }
 
