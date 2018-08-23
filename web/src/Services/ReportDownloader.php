@@ -18,7 +18,7 @@ class ReportDownloader
 
     public function importReports()
     {
-        $path = '/var/www/html/reports/reports.csv';
+        $path = '/var/www/html/public/reports.csv';
         $reports = $this->entityManager->getRepository(Report::class)->findAll();
         $reportArray = array();
         foreach ($reports as $report) {
@@ -33,5 +33,6 @@ class ReportDownloader
         foreach ($reportArray as $report) {
             fputcsv($file, $report);
         }
+        header('Location: /reports.csv');
     }
 }

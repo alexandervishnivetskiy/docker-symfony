@@ -2,3 +2,6 @@ td, th   {
     min-width: 150px;
     text-align: center;
 }
+td{
+    height: 100px;
+}

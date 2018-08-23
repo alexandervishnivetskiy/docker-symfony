@@ -69,7 +69,7 @@ class ReportController extends Controller
     {
         $downloader = $this->get('report.downloader');
         $downloader->importReports();
-        return new Response();
+        return new Response('');
     }
 
     /**
