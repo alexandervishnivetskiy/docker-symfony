@@ -31,6 +31,18 @@ class ReportRepository extends ServiceEntityRepository
             ->getQuery();
 
         return $queryBuilder->execute();
+    }
 
+    public function findAllReportByClientID($id)
+    {
+
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->select('r')
+            ->from('App\Entity\Report', 't')
+            ->where("r.client = :id")
+            ->setParameter('id', "$id")
+            ->getQuery();
+
+        return $queryBuilder->execute();
     }
 }

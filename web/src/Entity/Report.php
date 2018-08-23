@@ -34,8 +34,8 @@ class Report implements \JsonSerializable
     private $err_desc;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Client", inversedBy="reports")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      */
     private $client;
 

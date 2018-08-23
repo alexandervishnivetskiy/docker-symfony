@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Report;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,8 +38,11 @@ class UIController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $id = $form->getData();
             $clients = $this->getDoctrine()->getRepository(Client::class)->findBy(array('id' => $id));
+            $clientID = $clients[0]->getID();
             $reportsArray = array();
-            $reports = $clients[0]->getReports();
+            $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportByClientID($clientID);
+
+//            $reports = $clients[0]->getReports();
             foreach ($reports as $report) {
                 $arr = array();
                 $arr['id'] = $report->getID();

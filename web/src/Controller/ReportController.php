@@ -18,32 +18,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ReportController extends Controller
 {
     /**
-     * @Route("/api/client/delete/{id}")
-     * @Method({"GET"})
-     */
-    public function deleteClient($id, EntityManagerInterface $entityManager)
-    {
-        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
-        if (!$client) {
-            throw $this->createNotFoundException('No client found for id' . " $id");
-        }
-        $entityManager->remove($client);
-        $entityManager->flush();
-        return new JsonResponse($client);
-    }
-
-    /**
      * @Route("/api/client/{id}")
      * @Method({"GET"})
      */
     public function showAllReportsOfClient($id)
     {
-        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
-        if (!$client) {
-            throw $this->createNotFoundException('No client found for id' . " $id");
-        }
-        $reports = $client->getReports();
 
+        $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportByClientID($id);
 
         $reportsArray = array();
         foreach ($reports as $report) {
@@ -55,10 +36,27 @@ class ReportController extends Controller
             $arr['client'] = $report->getClient()->getName();
             $reportsArray[] = $arr;
         }
-        if (empty($reportsArray)){
+        if (empty($reportsArray)) {
             throw $this->createNotFoundException('The client with id ' . $id . ' doesn\'t have any reports');
         }
         return new JsonResponse($reportsArray);
+    }
+
+
+    /**
+     * @Route("/api/client/delete/{id}")
+     * @Method({"GET"})
+     */
+    public function deleteClient($id, EntityManagerInterface $entityManager)
+    {
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        if (!$client) {
+            throw $this->createNotFoundException('No client found for id' . " $id");
+        }
+        var_dump($client);
+        $entityManager->remove($client);
+        $entityManager->flush();
+        return new JsonResponse($client);
     }
 
     /**
