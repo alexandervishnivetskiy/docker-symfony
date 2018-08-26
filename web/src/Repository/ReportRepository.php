@@ -31,36 +31,17 @@ class ReportRepository extends ServiceEntityRepository
             ->getQuery();
 
         return $queryBuilder->execute();
-
     }
 
-
-//    /**
-//     * @return Report[] Returns an array of Report objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function findAllReportsByClientID($id)
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r . exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r . id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->select('r')
+            ->from('App\Entity\Report', 't')
+            ->where("r.client = :id")
+            ->setParameter('id', "$id")
+            ->getQuery();
 
-    /*
-    public function findOneBySomeField($value): ?Report
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r . exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $queryBuilder->execute();
     }
-    */
 }
