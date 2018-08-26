@@ -16,11 +16,13 @@ class ClientFixtures extends Fixture
 
     {
         $faker = Factory::create();
-        $count = rand(1, 10);
+        $numClients = rand(1, 10);
 
-        for ($j = 0; $j < $count; $j++) {
+        for ($j = 0; $j < $numClients; $j++) {
             $client = new Client();
-            for ($i = 0; $i < $count; $i++) {
+            $numReports = rand(0, 10);
+
+            for ($i = 0; $i < $numReports; $i++) {
 
                 $client->setName($faker->name);
                 $client->setCountry($faker->country);

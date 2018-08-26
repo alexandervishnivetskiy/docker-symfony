@@ -18,7 +18,6 @@ class ReportDownloader
 
     public function importReports()
     {
-        $path = '/var/www/html/public/reports.csv';
         $reports = $this->entityManager->getRepository(Report::class)->findAll();
         $reportArray = array();
         foreach ($reports as $report) {
@@ -29,10 +28,13 @@ class ReportDownloader
             $arr['description'] = $report->getDescription();
             $reportArray[] = $arr;
         };
-        $file = fopen($path, 'w');
+
+        $file = fopen('php://output', 'w');
+        header("Content-Disposition: attachment; filename=$file");
+
         foreach ($reportArray as $report) {
             fputcsv($file, $report);
         }
-        header('Location: /reports.csv');
+        fclose($file);
     }
 }

@@ -33,9 +33,8 @@ class ReportRepository extends ServiceEntityRepository
         return $queryBuilder->execute();
     }
 
-    public function findAllReportByClientID($id)
+    public function findAllReportsByClientID($id)
     {
-
         $queryBuilder = $this->createQueryBuilder('r')
             ->select('r')
             ->from('App\Entity\Report', 't')

@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ReportController extends Controller
 {
+
+
     /**
      * @Route("/api/client/{id}")
      * @Method({"GET"})
@@ -24,7 +26,7 @@ class ReportController extends Controller
     public function showAllReportsOfClient($id)
     {
 
-        $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportByClientID($id);
+        $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($id);
 
         $reportsArray = array();
         foreach ($reports as $report) {
@@ -135,13 +137,13 @@ class ReportController extends Controller
     public function newReport(Request $request)
     {
         $report = new Report();
-        $entityManager = $this->getDoctrine()->getManager();
-        $request = Request::createFromGlobals();
 
         $report->setName($request->request->get('name'));
         $report->setClient($request->request->get('client'));
         $report->setDeviceID($request->request->get('deviceID'));
         $report->setDescription($request->request->get('err_desc'));
+
+        $entityManager = $this->getDoctrine()->getManager();
 
         $entityManager->persist($report);
         $entityManager->flush();

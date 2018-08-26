@@ -35,7 +35,7 @@ class Report implements \JsonSerializable
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client")
-     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="Cascade")
      */
     private $client;
 
