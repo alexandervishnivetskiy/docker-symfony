@@ -13,11 +13,10 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 {% for report in reports %}
                     <tr>
                         <td class="align-middle">{{ report.client }}</td>
-                        <td class="align-middle">{{ report.id }}</td>
+                        <td class="align-middle">{{ report.client }}</td>
                         <td class="align-middle">{{ report.name }}</td>
                         <td class="align-middle">{{ report.deviceID }}</td>
                         <td class="align-middle">{{ report.description }}</td>
@@ -27,8 +26,7 @@
             </table>
         </div>
         <div class="row my-3">
-        <a class="btn btn-primary mx-auto" href="/">Return back</a>
+            <a class="btn btn-primary mx-auto" href="/">Go Back</a>
         </div>
     </div>
-
 {% endblock %}

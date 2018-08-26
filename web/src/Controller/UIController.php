@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Services\CountrySelector;
 
 
 class UIController extends Controller
@@ -25,10 +26,12 @@ class UIController extends Controller
     public function renderClientTable(Request $request)
     {
         $clients = $this->getDoctrine()->getRepository(Client::class)->findAll();
-        $clientName = array();
+        $clientName = ['Please, select client   ...' => '0'];
         foreach ($clients as $client) {
             $clientName[$client->getName()] = $client->getID();
         }
+
+        //here must be check for empty clients array!!!
 
         $form = $this->createFormBuilder()
             ->add('select', ChoiceType::class,
@@ -41,22 +44,25 @@ class UIController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $id = $form->getData();
-            $clients = $this->getDoctrine()->getRepository(Client::class)->findBy(array('id' => $id));
-            $clientID = $clients[0]->getID();
-            $reportsArray = array();
-            $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
+            if ($id['select'] == 0) {
+                $this->redirectToRoute('home_page');
+            } else {
+                $clients = $this->getDoctrine()->getRepository(Client::class)->findBy(array('id' => $id));
+                $clientID = $clients[0]->getID();
+                $reportsArray = array();
+                $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
 
-            foreach ($reports as $report) {
-                $arr = array();
-                $arr['id'] = $report->getID();
-                $arr['name'] = $report->getName();
-                $arr['deviceID'] = $report->getDeviceID();
-                $arr['description'] = $report->getDescription();
-                $arr['client'] = $report->getClient()->getName();
-                $reportsArray[] = $arr;
+                foreach ($reports as $report) {
+                    $arr = array();
+                    $arr['id'] = $report->getID();
+                    $arr['name'] = $report->getName();
+                    $arr['deviceID'] = $report->getDeviceID();
+                    $arr['description'] = $report->getDescription();
+                    $arr['client'] = $report->getClient()->getName();
+                    $reportsArray[] = $arr;
+                }
+                return $this->render('reports/reports.html.twig', array('reports' => $reportsArray));
             }
-
-            return $this->render('clients/reports.html.twig', array('reports' => $reportsArray));
         }
         return $this->render('clients/index.html.twig', array('form' => $form->createView()));
     }
@@ -64,19 +70,10 @@ class UIController extends Controller
     /**
      * @Route("/client/new")
      */
-    public function addNewClient(Request $request)
+    public function addNewClient(Request $request, CountrySelector $countrySelector)
     {
-        $sql = "SELECT country_name FROM testDB.apps_countries";
-        $entityManager = $this->getDoctrine()->getManager();
-        $stmt = $entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
-        $countries = $stmt->fetchAll();
 
-        $countryList = array();
-        foreach ($countries as $country) {
-            $countryList[$country['country_name']] = $country['country_name'];
-        }
-
+        $countryList = $countrySelector->countrySelector();
         $form = $this->createFormBuilder()
             ->add('name', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
             ->add('telephone', TelType::class, array('attr' => array('class' => 'form-control mb-3')))
@@ -95,8 +92,13 @@ class UIController extends Controller
             $client->setCountry($data['country']);
             $client->setEmail($data['email']);
 
+            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($client);
             $entityManager->flush();
+            $clientArray = json_decode(json_encode($client), true);
+
+
+            return $this->render('clients/clientSuccess.html.twig', array('client' => $clientArray));
         }
         return $this->render('clients/newClient.html.twig', array('form' => $form->createView()));
     }
@@ -106,14 +108,11 @@ class UIController extends Controller
      */
     public function addNewReport(Request $request)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-
         $clients = $this->getDoctrine()->getRepository(Client::class)->findAll();
         $clientName = array();
         foreach ($clients as $client) {
             $clientName[$client->getName()] = $client->getID();
         }
-
 
         $form = $this->createFormBuilder()
             ->add('name', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
@@ -122,9 +121,11 @@ class UIController extends Controller
             ->add('client', ChoiceType::class, array('choices' => $clientName, 'attr' => array('class' => 'form-control mb-3')))
             ->add('submit', SubmitType::class, array('label' => 'Add new report', 'attr' => array('class' => 'form-control bg-success')))
             ->getForm();
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $report = new Report();
             $data = $form->getData();
             $report->setName($data['name']);
@@ -132,11 +133,14 @@ class UIController extends Controller
             $report->setDescription($data['errorDescription']);
             $client = $this->getDoctrine()->getRepository(Client::class)->find($data['client']);
             $report->setClient($client);
-
+            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($report);
             $entityManager->flush();
+            $reportArray = json_decode(json_encode($report), true);
+
+            return $this->render('reports/reportSuccess.html.twig', array('report' => $reportArray));
         }
-        return $this->render('clients/newReport.html.twig', array('form' => $form->createView()));
+        return $this->render('reports/newReport.html.twig', array('form' => $form->createView()));
     }
 
 

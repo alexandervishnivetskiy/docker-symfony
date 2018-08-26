@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Services\ReportDownloader;
 
 class ReportController extends Controller
 {
@@ -55,7 +56,6 @@ class ReportController extends Controller
         if (!$client) {
             throw $this->createNotFoundException('No client found for id' . " $id");
         }
-        var_dump($client);
         $entityManager->remove($client);
         $entityManager->flush();
         return new JsonResponse($client);
@@ -65,10 +65,9 @@ class ReportController extends Controller
      * @Route("/api/reports/download")
      * @Method({"GET"})
      */
-    public function importCSV()
+    public function importCSV(ReportDownloader $reportDownloader)
     {
-        $downloader = $this->get('report.downloader');
-        $downloader->importReports();
+        $reportDownloader->importReports();
         return new Response('');
     }
 
