@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client list{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h3 class="mx-auto my-3">Сlients with the largest number of reports
+            </h3>
+        </div>
+        <div class="mt-3 mx-3">
+            <table class="table table-lg table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>Client ID</th>
+                    <th>Name</th>
+                    <th>Telephone</th>
+                    <th>Country</th>
+                    <th>Email</th>
+                    <th>Reports quantity</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td class="align-middle">{{ client.id }}</td>
+                        <td class="align-middle">{{ client.name }}</td>
+                        <td class="align-middle">{{ client.telephone }}</td>
+                        <td class="align-middle">{{ client.country }}</td>
+                        <td class="align-middle">{{ client.email }}</td>
+                        <td class="align-middle">{{ client.count }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row my-3">
+            <a class="btn btn-primary mx-auto" href="/">Go Back</a>
+        </div>
+    </div>
+{% endblock %}
