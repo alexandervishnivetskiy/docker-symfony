@@ -61,9 +61,7 @@ class UIController extends Controller
                 return $this->render('reports/reports.html.twig', array('reports' => $reportsArray));
             }
         }
-        $urls = ['new_client' => 'client/new', 'new_report' => 'report/new'];
-
-        return $this->render('clients/index.html.twig', array('form' => $form->createView(), 'urls' => $urls));
+        return $this->render('clients/index.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -94,7 +92,6 @@ class UIController extends Controller
             $entityManager->persist($client);
             $entityManager->flush();
             $clientArray = json_decode(json_encode($client), true);
-
 
             return $this->render('clients/client_success.html.twig', array('client' => $clientArray));
         }
