@@ -30,9 +30,7 @@ class UIController extends Controller
         foreach ($clients as $client) {
             $clientName[$client->getName()] = $client->getID();
         }
-
-        //here must be check for empty clients array!!!
-
+        
         $form = $this->createFormBuilder()
             ->add('select', ChoiceType::class,
                 array('choices' => $clientName, 'attr' => array('class' => 'form-control')))
@@ -68,11 +66,10 @@ class UIController extends Controller
     }
 
     /**
-     * @Route("/client/new")
+     * @Route("/client/new", name="new_client_page")
      */
     public function addNewClient(Request $request, CountrySelector $countrySelector)
     {
-
         $countryList = $countrySelector->countrySelector();
         $form = $this->createFormBuilder()
             ->add('name', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
@@ -104,12 +101,13 @@ class UIController extends Controller
     }
 
     /**
-     * @Route("/report/new")
+     * @Route("/report/new", name="new_report_page")
      */
     public function addNewReport(Request $request)
     {
         $clients = $this->getDoctrine()->getRepository(Client::class)->findAll();
-        $clientName = array();
+        $clientName = ['Please, select client...' => 0];
+
         foreach ($clients as $client) {
             $clientName[$client->getName()] = $client->getID();
         }
@@ -125,23 +123,25 @@ class UIController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $report = new Report();
             $data = $form->getData();
-            $report->setName($data['name']);
-            $report->setDeviceID($data['device_id']);
-            $report->setDescription($data['errorDescription']);
-            $client = $this->getDoctrine()->getRepository(Client::class)->find($data['client']);
-            $report->setClient($client);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($report);
-            $entityManager->flush();
-            $reportArray = json_decode(json_encode($report), true);
-
-            return $this->render('reports/reportSuccess.html.twig', array('report' => $reportArray));
+            if ($data['client'] != 0) {
+                $report = new Report();
+                $report->setName($data['name']);
+                $report->setDeviceID($data['device_id']);
+                $report->setDescription($data['errorDescription']);
+                $client = $this->getDoctrine()->getRepository(Client::class)->find($data['client']);
+                $report->setClient($client);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($report);
+                $entityManager->flush();
+                $reportArray = json_decode(json_encode($report), true);
+                $reportArray = json_decode(json_encode($report), true);
+                return $this->render('reports/reportSuccess.html.twig', array('report' => $reportArray));
+            } else {
+                return $this->redirectToRoute('new_report_page');
+            }
         }
         return $this->render('reports/newReport.html.twig', array('form' => $form->createView()));
     }
-
 
 }
