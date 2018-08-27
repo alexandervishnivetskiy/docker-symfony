@@ -3,14 +3,14 @@
 {% block title %}Client list{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="mt-5">
-            {{ form_start(form, {'method': 'POST'}) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.select, {'label': 'Please, select a client below...'}) }}
-            {{ form_row(form.submit, { 'label': 'Show reports' }) }}
-            {{ form_end(form) }}
-        </div>
+<div class="container">
+
+    <div class="mt-5">
+        {{ form_start(form, {'method': 'POST'}) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.select, {'label': 'Please, select a client below...'}) }}
+        {{ form_row(form.submit, { 'label': 'Show reports' }) }}
+        {{ form_end(form) }}
     </div>
 
-{% endblock %}
+    {% endblock %}

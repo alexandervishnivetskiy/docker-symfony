@@ -16,20 +16,20 @@ class ClientFixtures extends Fixture
 
     {
         $faker = Factory::create();
-        $numClients = rand(1, 10);
 
+        $numClients = 10;
         for ($j = 0; $j < $numClients; $j++) {
+
             $client = new Client();
+            $client->setName($faker->name);
+            $client->setCountry($faker->country);
+            $client->setTelephone($faker->phoneNumber);
+            $client->setCountry($faker->country);
+            $client->setEmail($faker->email);
+            $manager->persist($client);
+
             $numReports = rand(0, 10);
-
-            for ($i = 0; $i < $numReports; $i++) {
-
-                $client->setName($faker->name);
-                $client->setCountry($faker->country);
-                $client->setTelephone($faker->phoneNumber);
-                $client->setCountry($faker->country);
-                $client->setEmail($faker->email);
-                $manager->persist($client);
+            for ($i = 1; $i <= $numReports; $i++) {
 
                 $report = new Report();
                 $report->setName($faker->text(20));
@@ -37,12 +37,8 @@ class ClientFixtures extends Fixture
                 $report->setDescription($faker->text);
                 $report->setClient($client);
                 $manager->persist($report);
-
-                $manager->flush();
             }
+            $manager->flush();
         }
-
     }
-
-
 }

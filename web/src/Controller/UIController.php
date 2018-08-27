@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Report;
-use function PHPSTORM_META\type;
-use function Sodium\add;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -16,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Services\CountrySelector;
+use App\Services\StatisticObserver;
 
 
 class UIController extends Controller
@@ -30,7 +29,7 @@ class UIController extends Controller
         foreach ($clients as $client) {
             $clientName[$client->getName()] = $client->getID();
         }
-        
+
         $form = $this->createFormBuilder()
             ->add('select', ChoiceType::class,
                 array('choices' => $clientName, 'attr' => array('class' => 'form-control')))
@@ -62,7 +61,9 @@ class UIController extends Controller
                 return $this->render('reports/reports.html.twig', array('reports' => $reportsArray));
             }
         }
-        return $this->render('clients/index.html.twig', array('form' => $form->createView()));
+        $urls = ['new_client' => 'client/new', 'new_report' => 'report/new'];
+
+        return $this->render('clients/index.html.twig', array('form' => $form->createView(), 'urls' => $urls));
     }
 
     /**
@@ -95,9 +96,9 @@ class UIController extends Controller
             $clientArray = json_decode(json_encode($client), true);
 
 
-            return $this->render('clients/clientSuccess.html.twig', array('client' => $clientArray));
+            return $this->render('clients/client_success.html.twig', array('client' => $clientArray));
         }
-        return $this->render('clients/newClient.html.twig', array('form' => $form->createView()));
+        return $this->render('clients/new_client.html.twig', array('form' => $form->createView()));
     }
 
     /**
@@ -135,13 +136,29 @@ class UIController extends Controller
                 $entityManager->persist($report);
                 $entityManager->flush();
                 $reportArray = json_decode(json_encode($report), true);
-                $reportArray = json_decode(json_encode($report), true);
-                return $this->render('reports/reportSuccess.html.twig', array('report' => $reportArray));
+                return $this->render('reports/report_success.html.twig', array('report' => $reportArray));
             } else {
                 return $this->redirectToRoute('new_report_page');
             }
         }
-        return $this->render('reports/newReport.html.twig', array('form' => $form->createView()));
+        return $this->render('reports/new_report.html.twig', array('form' => $form->createView()));
     }
 
+    /**
+     * @Route("client/zero_reports/")
+     */
+    public function showClientWithoutReports(StatisticObserver $statisticObserver)
+    {
+        $clients = $statisticObserver->showClientWithoutReports();
+        return $this->render('clients/without_reports.html.twig', array('clients' => $clients));
+    }
+
+    /**
+     * @Route("client/top/")
+     */
+    public function test(StatisticObserver $statisticObserver)
+    {
+        $topClients = $statisticObserver->showTopThreeClient();
+        return $this->render('clients/top_clients.html.twig', array('clients' => $topClients));
+    }
 }

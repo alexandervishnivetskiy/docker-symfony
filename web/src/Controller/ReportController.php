@@ -135,15 +135,20 @@ class ReportController extends Controller
 
     public function newReport(Request $request)
     {
-        $report = new Report();
 
+        $id = $request->request->get('client');
+        $client = $this->getDoctrine()->getRepository(Client::class)->find($id);
+        if (!$client){
+            throw $this->createNotFoundException('You added id of non-existent user. Please, specify correct user id');
+        }
+
+        $report = new Report();
         $report->setName($request->request->get('name'));
-        $report->setClient($request->request->get('client'));
         $report->setDeviceID($request->request->get('deviceID'));
         $report->setDescription($request->request->get('err_desc'));
+        $report->setClient($client);
 
         $entityManager = $this->getDoctrine()->getManager();
-
         $entityManager->persist($report);
         $entityManager->flush();
 
