@@ -11,3 +11,5 @@ data/
 /web.phpunit
 /web/phpunit.xml
 /web/.web-server-pid
+/web/reports/reports.csv
+/web/public/reports.csv

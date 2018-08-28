@@ -3,12 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReportRepository")
  */
 class Report implements \JsonSerializable
-
 {
     /**
      * @ORM\Id()
@@ -19,24 +20,29 @@ class Report implements \JsonSerializable
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=3)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=100)
-     */
-    private $client;
-
-    /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     private $deviceID;
 
     /**
      * @ORM\Column(type="string", length=250)
+     * @Assert\NotBlank()
      */
 
     private $err_desc;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id", onDelete="Cascade")
+     */
+    private $client;
 
 
     public function getId()
@@ -52,16 +58,6 @@ class Report implements \JsonSerializable
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    public function setClient($client)
-    {
-        $this->client = $client;
     }
 
     public function getDeviceID()
@@ -88,5 +84,17 @@ class Report implements \JsonSerializable
     {
         $props = get_object_vars($this);
         return $props;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): self
+    {
+        $this->client = $client;
+
+        return $this;
     }
 }
