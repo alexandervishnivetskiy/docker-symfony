@@ -26,30 +26,20 @@ class UIController extends Controller
      */
     public function renderClientTable(Request $request)
     {
-        $clients = $this->getDoctrine()->getRepository(Client::class)->findAll();
-        $clientName = ['Please, select client   ...' => '0'];
-        foreach ($clients as $client) {
-            $clientName[$client->getName()] = $client->getID();
-        }
         $form = $this->createFormBuilder()
-            ->add('select', ChoiceType::class,
-                array('choices' => $clientName, 'attr' => array('class' => 'form-control')))
-            ->add('submit', SubmitType::class,
-                array('attr' => array('class' => 'form-control mt-3 bg-success')))
+            ->add('client', EntityType::class, array('class' => Client::class, 'choice_label' => 'name', 'attr' => array('class' => 'form-control mb-3')))
+            ->add('submit', SubmitType::class, array('attr' => array('class' => 'form-control mt-3 bg-success')))
             ->getForm();
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $id = $form->getData();
-            if ($id['select'] == 0) {
+        if ($form->isSubmitted()) {
+            $data = $form->getData();
+            if ($data['client'] == null) {
                 $this->redirectToRoute('home_page');
             } else {
-                $clients = $this->getDoctrine()->getRepository(Client::class)->findBy(array('id' => $id));
-                $clientID = $clients[0]->getID();
-                $reportsArray = array();
+                $clientID = json_decode(json_encode($data['client']))->id;
                 $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
-
                 foreach ($reports as $report) {
                     $arr = array();
                     $arr['id'] = $report->getID();
@@ -115,70 +105,54 @@ class UIController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = json_decode(json_encode($form->getData()));
-            $clientName = $data->client->name;
-            $client = $this->getDoctrine()->getRepository(Client::class)->findClientByName($clientName);
+            if ($data->client == null) {
+                $this->redirectToRoute('new_report_page');
+            } else {
+                $clientName = $data->client->name;
 
-            $report = new Report();
-            $report->setName($data->name);
-            $report->setDeviceID((int)$data->deviceID);
-            $report->setDescription($data->err_desc);
-            $report->setClient($client);
+                $client = $this->getDoctrine()->getRepository(Client::class)->findClientByName($clientName);
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($report);
-            $entityManager->flush();
-            $reportArray = json_decode(json_encode($report), true);
+                $report = new Report();
+                $report->setName($data->name);
+                $report->setDeviceID((int)$data->deviceID);
+                $report->setDescription($data->err_desc);
+                $report->setClient($client);
 
-            return $this->render('reports/report_success.html.twig', array('report' => $reportArray));
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($report);
+                $entityManager->flush();
+                $reportArray = json_decode(json_encode($report), true);
+
+                return $this->render('reports/report_success.html.twig', array('report' => $reportArray));
+            }
         }
         return $this->render('reports/new_report.html.twig', array('form' => $form->createView()));
     }
 
     /**
-     * @Route("client/info")
+     * @Route("client/info", name="client_page")
      */
     public function showClientInfo(Request $request)
     {
-        $clients = $this->getDoctrine()->getRepository(Client::class)->findAll();
-        $clientName = ['Please, select client   ...' => '0'];
-        foreach ($clients as $client) {
-            $clientName[$client->getName()] = $client->getID();
-        }
-
         $form = $this->createFormBuilder()
-            ->add('select', ChoiceType::class,
-                array('choices' => $clientName, 'attr' => array('class' => 'form-control')))
-            ->add('submit', SubmitType::class,
-                array('attr' => array('class' => 'form-control mt-3 bg-success')))
+            ->add('client', EntityType::class, array('class' => Client::class, 'choice_label' => 'name', 'attr' => array('class' => 'form-control mb-3')))
+            ->add('submit', SubmitType::class, array('attr' => array('class' => 'form-control mt-3 bg-success')))
             ->getForm();
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $id = $form->getData();
-            if ($id['select'] == 0) {
-                $this->redirectToRoute('home_page');
+        if ($form->isSubmitted()) {
+            $data = $form->getData();
+            if ($data['client'] == null) {
+                $this->redirectToRoute('client_page');
             } else {
-                $clients = $this->getDoctrine()->getRepository(Client::class)->findBy(array('id' => $id));
-                $client = $clients[0];
-                $reportsArray = array();
-                $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
-
-                foreach ($reports as $report) {
-                    $arr = array();
-                    $arr['id'] = $report->getID();
-                    $arr['name'] = $report->getName();
-                    $arr['deviceID'] = $report->getDeviceID();
-                    $arr['description'] = $report->getDescription();
-                    $arr['client'] = $report->getClient()->getName();
-                    $reportsArray[] = $arr;
-                }
+                $client = json_decode(json_encode($data['client']), true);
                 return $this->render('clients/client_info.html.twig', array('client' => $client));
             }
         }
         return $this->render('clients/index.html.twig', array('form' => $form->createView()));
     }
-    
+
     /**
      * @Route("client/zero_reports/")
      */

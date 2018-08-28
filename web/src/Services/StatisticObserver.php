@@ -50,6 +50,7 @@ class StatisticObserver
         asort($clients);
 
         $keyArray = array_keys($clients);
+        $topClients = [];
         for ($i = 0; $i < 3; $i++) {
             $topClient['count'] = array_pop($clients);
             $topClient['name'] = array_pop($keyArray);
