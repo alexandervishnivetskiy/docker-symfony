@@ -12,24 +12,15 @@
             <table class="table table-lg table-striped table-bordered">
                 <thead>
                 <tr>
-                    <th>Client ID</th>
-                    <th>Name</th>
-                    <th>Telephone</th>
-                    <th>Country</th>
-                    <th>Email</th>
                     <th>Reports quantity</th>
-
+                    <th>Client name</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for client in clients %}
                     <tr>
-                        <td class="align-middle">{{ client.id }}</td>
-                        <td class="align-middle">{{ client.name }}</td>
-                        <td class="align-middle">{{ client.telephone }}</td>
-                        <td class="align-middle">{{ client.country }}</td>
-                        <td class="align-middle">{{ client.email }}</td>
                         <td class="align-middle">{{ client.count }}</td>
+                        <td class="align-middle">{{ client.name }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

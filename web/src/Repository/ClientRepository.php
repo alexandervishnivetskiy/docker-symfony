@@ -28,8 +28,7 @@ class ClientRepository extends ServiceEntityRepository
             ->where("r.name = :name")
             ->setParameter('name', "$name")
             ->getQuery();
-
-        return $queryBuilder->execute();
+        $client = $queryBuilder->execute();
+        return $client[0];
     }
 }
-

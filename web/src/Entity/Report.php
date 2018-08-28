@@ -3,12 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReportRepository")
  */
 class Report implements \JsonSerializable
-
 {
     /**
      * @ORM\Id()
@@ -19,16 +20,20 @@ class Report implements \JsonSerializable
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank()
+     * @Assert\Length(min=3)
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     private $deviceID;
 
     /**
      * @ORM\Column(type="string", length=250)
+     * @Assert\NotBlank()
      */
 
     private $err_desc;
