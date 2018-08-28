@@ -40,6 +40,7 @@ class UIController extends Controller
             } else {
                 $clientID = json_decode(json_encode($data['client']))->id;
                 $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
+                $reportsArray = [];
                 foreach ($reports as $report) {
                     $arr = [];
                     $arr['id'] = $report->getID();
@@ -118,7 +119,7 @@ class UIController extends Controller
 
                 $report->setName($data->name);
                 $report->setDeviceID((int)$data->deviceID);
-                $report->setDescription($data->err_desc);
+                $report->setDescription($data->description);
                 $report->setClient($client);
 
                 $entityManager = $this->getDoctrine()->getManager();
