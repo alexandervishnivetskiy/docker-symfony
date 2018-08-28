@@ -41,7 +41,7 @@ class UIController extends Controller
                 $clientID = json_decode(json_encode($data['client']))->id;
                 $reports = $this->getDoctrine()->getRepository(Report::class)->findAllReportsByClientID($clientID);
                 foreach ($reports as $report) {
-                    $arr = array();
+                    $arr = [];
                     $arr['id'] = $report->getID();
                     $arr['name'] = $report->getName();
                     $arr['deviceID'] = $report->getDeviceID();
@@ -61,7 +61,9 @@ class UIController extends Controller
     public function addNewClient(Request $request, CountrySelector $countrySelector, ValidatorInterface $validator)
     {
         $countryList = $countrySelector->countrySelector();
-        $form = $this->createFormBuilder(new Client())
+        $client = new Client();
+
+        $form = $this->createFormBuilder($client)
             ->add('name', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
             ->add('telephone', TelType::class, array('attr' => array('class' => 'form-control mb-3', 'placeholder' => 'xxx-xxx-xx-xx')))
             ->add('country', ChoiceType::class, array('choices' => $countryList, 'attr' => array('class' => 'form-control mb-3')))
@@ -72,7 +74,6 @@ class UIController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $client = new Client();
             $data = json_decode(json_encode($form->getData()), true);
             $client->setName($data['name']);
             $client->setTelephone($data['telephone']);
@@ -93,15 +94,18 @@ class UIController extends Controller
      */
     public function addNewReport(Request $request)
     {
-        $form = $this->createFormBuilder(new Report())
+        $report = new Report();
+
+        $form = $this->createFormBuilder($report)
             ->add('name', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
-            ->add('device_id', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
+            ->add('deviceID', TextType::class, array('label'=> 'Device ID', 'attr' => array('class' => 'form-control mb-3')))
             ->add('description', TextType::class, array('attr' => array('class' => 'form-control mb-3')))
             ->add('client', EntityType::class, array('class' => Client::class, 'choice_label' => 'name', 'attr' => array('class' => 'form-control mb-3')))
             ->add('submit', SubmitType::class, array('label' => 'Add new report', 'attr' => array('class' => 'form-control bg-success')))
             ->getForm();
 
-        $form->handleRequest($request);
+
+            $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = json_decode(json_encode($form->getData()));
@@ -112,7 +116,6 @@ class UIController extends Controller
 
                 $client = $this->getDoctrine()->getRepository(Client::class)->findClientByName($clientName);
 
-                $report = new Report();
                 $report->setName($data->name);
                 $report->setDeviceID((int)$data->deviceID);
                 $report->setDescription($data->err_desc);

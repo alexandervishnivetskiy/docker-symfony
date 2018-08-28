@@ -36,7 +36,7 @@ class Report implements \JsonSerializable
      * @Assert\NotBlank()
      */
 
-    private $err_desc;
+    private $description;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Client")
@@ -72,12 +72,12 @@ class Report implements \JsonSerializable
 
     public function getDescription()
     {
-        return $this->err_desc;
+        return $this->description;
     }
 
-    public function setDescription($err_desc)
+    public function setDescription($description)
     {
-        $this->err_desc = $err_desc;
+        $this->description = $description;
     }
 
     public function jsonSerialize()

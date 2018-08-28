@@ -20,18 +20,18 @@ class StatisticObserver
     {
 
         $clients = $this->entityManager->getRepository(Client::class)->findAll();
-        $clientsID = array();
+        $clientsID = [];
         foreach ($clients as $client) {
             $clientsID[] = $client->getID();
         }
-        $emptyIDs = array();
+        $emptyIDs = [];
         foreach ($clientsID as $id) {
             $reports = $this->entityManager->getRepository(Report::class)->findAllReportsByClientID($id);
             if (empty($reports)) {
                 $emptyIDs[] = $id;
             }
         }
-        $clientsArr = array();
+        $clientsArr = [];
         foreach ($emptyIDs as $emptyID) {
             $client = $this->entityManager->getRepository(Client::class)->find($emptyID);
             $clientsArr[] = $client;
